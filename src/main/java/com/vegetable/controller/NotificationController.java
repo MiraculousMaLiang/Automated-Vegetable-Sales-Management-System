@@ -54,7 +54,7 @@ public class NotificationController {
     @PostMapping("/read/{notifyId}")
     public Result<Void> markAsRead(@PathVariable Long notifyId) {
         notificationService.markAsRead(notifyId);
-        return Result.success("已标记为已读");
+        return Result.success();
     }
 
     /**
@@ -65,6 +65,6 @@ public class NotificationController {
     public Result<Void> markAllAsRead() {
         int userId = StpUtil.getLoginIdAsInt();
         notificationService.markAllAsRead(userId);
-        return Result.success("全部已读");
+        return Result.success();
     }
 }

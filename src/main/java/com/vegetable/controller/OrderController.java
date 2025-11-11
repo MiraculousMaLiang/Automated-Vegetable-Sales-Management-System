@@ -38,7 +38,7 @@ public class OrderController {
     @PostMapping("/create")
     public Result<Order> createOrder(@RequestBody @Validated CreateOrderRequest request) {
         Order order = orderService.createOrder(request);
-        return Result.success("订单创建成功", order);
+        return Result.success(order);
     }
 
     /**
@@ -49,7 +49,7 @@ public class OrderController {
     public Result<Void> payOrder(@PathVariable @NotBlank String orderId,
                                   @RequestParam @NotBlank(message = "支付方式不能为空") String payMethod) {
         orderService.payOrder(orderId, payMethod);
-        return Result.success("支付成功");
+        return Result.success();
     }
 
     /**
@@ -60,7 +60,7 @@ public class OrderController {
     public Result<Void> cancelOrder(@PathVariable String orderId,
                                      @RequestParam String cancelReason) {
         orderService.cancelOrder(orderId, cancelReason);
-        return Result.success("订单已取消");
+        return Result.success();
     }
 
     /**
@@ -73,7 +73,7 @@ public class OrderController {
                                    @RequestParam @NotBlank(message = "物流公司不能为空") String logisticsCompany,
                                    @RequestParam @NotBlank(message = "物流单号不能为空") String trackingNumber) {
         orderService.shipOrder(orderId, logisticsCompany, trackingNumber);
-        return Result.success("发货成功");
+        return Result.success();
     }
 
     /**
@@ -83,7 +83,7 @@ public class OrderController {
     @PostMapping("/confirm/{orderId}")
     public Result<Void> confirmReceipt(@PathVariable String orderId) {
         orderService.confirmReceipt(orderId);
-        return Result.success("确认收货成功");
+        return Result.success();
     }
 
     /**

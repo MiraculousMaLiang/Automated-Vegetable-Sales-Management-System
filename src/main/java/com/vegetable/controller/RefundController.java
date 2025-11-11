@@ -37,7 +37,7 @@ public class RefundController {
                                       @RequestParam @NotBlank(message = "退款原因不能为空") String refundReason,
                                       @RequestParam(required = false) String refundImages) {
         Refund refund = refundService.applyRefund(orderId, refundType, refundReason, refundImages);
-        return Result.success("退款申请已提交", refund);
+        return Result.success(refund);
     }
 
     /**
@@ -49,7 +49,7 @@ public class RefundController {
     public Result<Void> approveRefund(@PathVariable String refundId,
                                        @RequestParam(required = false) String merchantReply) {
         refundService.approveRefund(refundId, merchantReply);
-        return Result.success("已同意退款");
+        return Result.success();
     }
 
     /**
@@ -61,7 +61,7 @@ public class RefundController {
     public Result<Void> rejectRefund(@PathVariable String refundId,
                                       @RequestParam @NotBlank(message = "拒绝原因不能为空") String rejectReason) {
         refundService.rejectRefund(refundId, rejectReason);
-        return Result.success("已拒绝退款");
+        return Result.success();
     }
 
     /**
@@ -98,7 +98,7 @@ public class RefundController {
     public Result<Refund> getRefundDetail(@PathVariable String refundId) {
         Refund refund = refundService.getById(refundId);
         if (refund == null) {
-            return Result.notFound("退款单不存在");
+            return Result.error("退款单不存在");
         }
         return Result.success(refund);
     }

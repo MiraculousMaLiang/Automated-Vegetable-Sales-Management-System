@@ -48,7 +48,7 @@ public class VegetableController {
     public Result<Vegetable> getVegetableById(@PathVariable Integer id) {
         Vegetable vegetable = vegetableService.getById(id);
         if (vegetable == null) {
-            return Result.notFound("商品不存在");
+            return Result.error("商品不存在");
         }
         return Result.success(vegetable);
     }
@@ -61,7 +61,7 @@ public class VegetableController {
     @SaCheckRole("merchant")
     public Result<Void> addVegetable(@RequestBody Vegetable vegetable) {
         vegetableService.save(vegetable);
-        return Result.success("添加成功");
+        return Result.success();
     }
 
     /**
@@ -73,7 +73,7 @@ public class VegetableController {
     public Result<Void> updateVegetable(@PathVariable Integer id, @RequestBody Vegetable vegetable) {
         vegetable.setVegId(id);
         vegetableService.updateById(vegetable);
-        return Result.success("更新成功");
+        return Result.success();
     }
 
     /**
@@ -84,7 +84,7 @@ public class VegetableController {
     @SaCheckRole("merchant")
     public Result<Void> deleteVegetable(@PathVariable Integer id) {
         vegetableService.removeById(id);
-        return Result.success("删除成功");
+        return Result.success();
     }
 
     /**
@@ -98,6 +98,6 @@ public class VegetableController {
         vegetable.setVegId(id);
         vegetable.setStatus(status);
         vegetableService.updateById(vegetable);
-        return Result.success(status == 1 ? "上架成功" : "下架成功");
+        return Result.success();
     }
 }

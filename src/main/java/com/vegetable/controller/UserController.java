@@ -43,7 +43,7 @@ public class UserController {
         data.put("token", token);
         data.put("userInfo", user);
 
-        return Result.success("登录成功", data);
+        return Result.success(data);
     }
 
     /**
@@ -57,7 +57,7 @@ public class UserController {
         User user = userService.register(username, phone, password);
         // 清空密码
         user.setPassword(null);
-        return Result.success("注册成功", user);
+        return Result.success(user);
     }
 
     /**
@@ -78,7 +78,7 @@ public class UserController {
     public Result<Void> changePassword(@RequestParam @NotBlank(message = "旧密码不能为空") String oldPassword,
                                         @RequestParam @NotBlank(message = "新密码不能为空") String newPassword) {
         userService.changePassword(oldPassword, newPassword);
-        return Result.success("密码修改成功,请重新登录");
+        return Result.success();
     }
 
     /**
@@ -88,7 +88,7 @@ public class UserController {
     @PostMapping("/logout")
     public Result<Void> logout() {
         StpUtil.logout();
-        return Result.success("退出成功");
+        return Result.success();
     }
 
     /**
@@ -106,6 +106,6 @@ public class UserController {
         user.setStatus(null);
 
         userService.updateById(user);
-        return Result.success("更新成功");
+        return Result.success();
     }
 }

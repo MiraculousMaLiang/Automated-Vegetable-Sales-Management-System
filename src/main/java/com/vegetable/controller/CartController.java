@@ -32,7 +32,7 @@ public class CartController {
     public Result<Cart> addToCart(@RequestParam Integer vegId,
                                    @RequestParam(defaultValue = "1") Integer quantity) {
         Cart cart = cartService.addToCart(vegId, quantity);
-        return Result.success("添加成功", cart);
+        return Result.success(cart);
     }
 
     /**
@@ -53,7 +53,7 @@ public class CartController {
     public Result<Void> updateQuantity(@PathVariable Integer cartId,
                                         @RequestParam Integer quantity) {
         cartService.updateQuantity(cartId, quantity);
-        return Result.success("更新成功");
+        return Result.success();
     }
 
     /**
@@ -64,7 +64,7 @@ public class CartController {
     public Result<Void> updateSelected(@PathVariable Integer cartId,
                                         @RequestParam Integer isSelected) {
         cartService.updateSelected(cartId, isSelected);
-        return Result.success("操作成功");
+        return Result.success();
     }
 
     /**
@@ -74,7 +74,7 @@ public class CartController {
     @DeleteMapping("/{cartId}")
     public Result<Void> removeCartItem(@PathVariable Integer cartId) {
         cartService.removeCartItem(cartId);
-        return Result.success("删除成功");
+        return Result.success();
     }
 
     /**
@@ -84,6 +84,6 @@ public class CartController {
     @DeleteMapping("/clear")
     public Result<Void> clearCart() {
         cartService.clearCart();
-        return Result.success("购物车已清空");
+        return Result.success();
     }
 }
