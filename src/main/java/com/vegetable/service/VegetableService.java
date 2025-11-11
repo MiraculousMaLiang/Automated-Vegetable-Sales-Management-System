@@ -50,4 +50,16 @@ public interface VegetableService extends IService<Vegetable> {
      * @return 是否充足
      */
     boolean checkStock(Integer vegId, Integer quantity);
+
+    /**
+     * 检查并发送库存预警通知
+     */
+    void checkAndSendStockWarning();
+
+    /**
+     * 获取库存预警商品列表
+     *
+     * @return 预警商品列表
+     */
+    java.util.List<Vegetable> getStockWarningList();
 }
