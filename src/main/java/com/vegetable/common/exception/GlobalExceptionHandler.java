@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public Result<?> handleBusinessException(BusinessException e) {
         log.error("业务异常: {}", e.getMessage());
-        return Result.error(e.getCode(), e.getMessage());
+        return Result.error(e.getMessage());
     }
 
     /**
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotLoginException.class)
     public Result<?> handleNotLoginException(NotLoginException e) {
         log.error("未登录异常: {}", e.getMessage());
-        return Result.unauthorized("未登录或登录已过期,请重新登录");
+        return Result.error("未登录或登录已过期,请重新登录");
     }
 
     /**
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotPermissionException.class)
     public Result<?> handleNotPermissionException(NotPermissionException e) {
         log.error("权限不足异常: {}", e.getMessage());
-        return Result.forbidden("权限不足,无法访问");
+        return Result.error("权限不足,无法访问");
     }
 
     /**
@@ -56,7 +56,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotRoleException.class)
     public Result<?> handleNotRoleException(NotRoleException e) {
         log.error("角色权限异常: {}", e.getMessage());
-        return Result.forbidden("角色权限不足,无法访问");
+        return Result.error("角色权限不足,无法访问");
     }
 
     /**
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.error("参数校验异常: {}", errorMessage);
-        return Result.invalidParam(errorMessage);
+        return Result.error(errorMessage);
     }
 
     /**
@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.error("参数绑定异常: {}", errorMessage);
-        return Result.invalidParam(errorMessage);
+        return Result.error(errorMessage);
     }
 
     /**
@@ -91,7 +91,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public Result<?> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("非法参数异常: {}", e.getMessage());
-        return Result.invalidParam(e.getMessage());
+        return Result.error(e.getMessage());
     }
 
     /**
