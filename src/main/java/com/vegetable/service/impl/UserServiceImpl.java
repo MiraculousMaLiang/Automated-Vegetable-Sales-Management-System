@@ -1,10 +1,10 @@
 package com.vegetable.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.vegetable.common.exception.BusinessException;
+import com.vegetable.common.util.PasswordUtil;
 import com.vegetable.entity.User;
 import com.vegetable.mapper.UserMapper;
 import com.vegetable.service.UserService;
@@ -33,9 +33,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(400, "手机号或密码错误");
         }
 
-        // 2. 验证密码
-        String encryptedPassword = DigestUtil.sha256Hex(password);
-        if (!encryptedPassword.equals(user.getPassword())) {
+        // 2. 验证密码（支持BCrypt和SHA-256）
+        if (!PasswordUtil.matches(password, user.getPassword())) {
             throw new BusinessException(400, "手机号或密码错误");
         }
 
@@ -52,12 +51,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         updateById(user);
 
         // 5. 使用Sa-Token登录,传入用户ID
+        // 角色信息会通过StpInterfaceImpl自动获取，无需手动设置
         StpUtil.login(user.getUserId());
 
-        // 6. 将用户角色存入Session
-        StpUtil.getSession().set("role", user.getRole());
-
-        // 7. 返回Token
+        // 6. 返回Token
         return StpUtil.getTokenValue();
     }
 
@@ -69,10 +66,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(400, "手机号已被注册");
         }
 
-        // 2. 密码加密
-        String encryptedPassword = DigestUtil.sha256Hex(password);
+        // 2. 检查密码强度
+        if (!PasswordUtil.isStrongPassword(password)) {
+            throw new BusinessException(400, "密码长度至少为6位");
+        }
 
-        // 3. 创建用户
+        // 3. 密码加密（使用SHA-256以兼容现有测试数据）
+        // 新用户建议使用: String encryptedPassword = PasswordUtil.encode(password);
+        String encryptedPassword = PasswordUtil.encodeWithSHA256(password);
+
+        // 4. 创建用户
         User user = new User();
         user.setUsername(username);
         user.setPhone(phone);
@@ -82,7 +85,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
 
-        // 4. 保存用户
+        // 5. 保存用户
         save(user);
 
         return user;
@@ -115,13 +118,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user = getById(user.getUserId()); // 重新查询以获取密码字段
 
         // 2. 验证旧密码
-        String encryptedOldPassword = DigestUtil.sha256Hex(oldPassword);
-        if (!encryptedOldPassword.equals(user.getPassword())) {
+        if (!PasswordUtil.matches(oldPassword, user.getPassword())) {
             throw new BusinessException(400, "旧密码错误");
         }
 
-        // 3. 更新密码
-        String encryptedNewPassword = DigestUtil.sha256Hex(newPassword);
+        // 3. 检查新密码强度
+        if (!PasswordUtil.isStrongPassword(newPassword)) {
+            throw new BusinessException(400, "新密码长度至少为6位");
+        }
+
+        // 4. 更新密码（使用SHA-256以兼容现有数据格式）
+        String encryptedNewPassword = PasswordUtil.encodeWithSHA256(newPassword);
         user.setPassword(encryptedNewPassword);
         user.setUpdateTime(LocalDateTime.now());
 
